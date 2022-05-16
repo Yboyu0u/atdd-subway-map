@@ -3,6 +3,7 @@ package wooteco.subway.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import wooteco.subway.dao.JdbcSectionDao;
 import wooteco.subway.domain.Section;
 import wooteco.subway.domain.Sections;
@@ -20,6 +21,7 @@ public class SectionService {
         this.jdbcSectionDao = jdbcSectionDao;
     }
 
+    @Transactional
     public Long createSection(SectionRequest sectionRequest, Long lineId) {
         Long upStationId = sectionRequest.getUpStationId();
         Long downStationId = sectionRequest.getDownStationId();
@@ -57,6 +59,7 @@ public class SectionService {
         return jdbcSectionDao.save(newSection);
     }
 
+    @Transactional(readOnly = true)
     public List<StationResponse> getStationsByLineId(Long lineId) {
         return jdbcSectionDao.findByLineId(lineId)
                 .getStationIds()
@@ -65,6 +68,7 @@ public class SectionService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Transactional
     public boolean deleteSection(Long lineId, Long stationId) {
         Sections sections = jdbcSectionDao.findByLineIdAndStationId(lineId, stationId);
         sections.validateLengthToDeletion();
